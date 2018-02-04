@@ -56,6 +56,7 @@ Sensor::Sensor(struct sensor_t const* hwSensor, int halVersion)
     mPower = hwSensor->power;
     mMinDelay = hwSensor->minDelay;
     mFlags = 0;
+    mRequiredAppOp = AppOpsManager::OP_OTHER_SENSORS;  //default, other values are explicitly set
 
     // Set fifo event count zero for older devices which do not support batching. Fused
     // sensors also have their fifo counts set to zero.
@@ -90,6 +91,7 @@ Sensor::Sensor(struct sensor_t const* hwSensor, int halVersion)
     switch (mType) {
     case SENSOR_TYPE_ACCELEROMETER:
         mStringType = SENSOR_STRING_TYPE_ACCELEROMETER;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         mFlags |= SENSOR_FLAG_CONTINUOUS_MODE;
         break;
     case SENSOR_TYPE_AMBIENT_TEMPERATURE:
@@ -110,10 +112,12 @@ Sensor::Sensor(struct sensor_t const* hwSensor, int halVersion)
         break;
     case SENSOR_TYPE_GYROSCOPE:
         mStringType = SENSOR_STRING_TYPE_GYROSCOPE;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         mFlags |= SENSOR_FLAG_CONTINUOUS_MODE;
         break;
     case SENSOR_TYPE_GYROSCOPE_UNCALIBRATED:
         mStringType = SENSOR_STRING_TYPE_GYROSCOPE_UNCALIBRATED;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         mFlags |= SENSOR_FLAG_CONTINUOUS_MODE;
         break;
     case SENSOR_TYPE_HEART_RATE: {
@@ -131,6 +135,7 @@ Sensor::Sensor(struct sensor_t const* hwSensor, int halVersion)
         break;
     case SENSOR_TYPE_LINEAR_ACCELERATION:
         mStringType = SENSOR_STRING_TYPE_LINEAR_ACCELERATION;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         mFlags |= SENSOR_FLAG_CONTINUOUS_MODE;
         break;
     case SENSOR_TYPE_MAGNETIC_FIELD:
@@ -167,16 +172,19 @@ Sensor::Sensor(struct sensor_t const* hwSensor, int halVersion)
     case SENSOR_TYPE_SIGNIFICANT_MOTION:
         mStringType = SENSOR_STRING_TYPE_SIGNIFICANT_MOTION;
         mFlags |= SENSOR_FLAG_ONE_SHOT_MODE;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         if (halVersion < SENSORS_DEVICE_API_VERSION_1_3) {
             mFlags |= SENSOR_FLAG_WAKE_UP;
         }
         break;
     case SENSOR_TYPE_STEP_COUNTER:
         mStringType = SENSOR_STRING_TYPE_STEP_COUNTER;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         mFlags |= SENSOR_FLAG_ON_CHANGE_MODE;
         break;
     case SENSOR_TYPE_STEP_DETECTOR:
         mStringType = SENSOR_STRING_TYPE_STEP_DETECTOR;
+        mRequiredAppOp = AppOpsManager::OP_MOTION_SENSORS;
         mFlags |= SENSOR_FLAG_SPECIAL_REPORTING_MODE;
         break;
     case SENSOR_TYPE_TEMPERATURE:
